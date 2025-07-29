@@ -1,145 +1,163 @@
-// 為替レートを保存する変数
-let currentRates = {};
+// レート情報を保持するオブジェクト
+let rates = {};
+let lastUpdate = null;
 
 // 初期化関数
 async function initialize() {
     try {
-        // 現在のレートを取得
-        await fetchCurrentRates();
+        // レート取得
+        await fetchRates();
+        // UIに反映
+        updateRateDisplay();
     } catch (error) {
-        console.error('初期化中にエラーが発生しました:', error);
-        // エラー時にはダミーデータを表示
+        console.error('初期化エラー:', error);
+        // エラー時はダミーデータを使用
         setDummyData();
     }
 }
 
-// 現在のレートを取得する関数
-async function fetchCurrentRates() {
+// Open Exchange Rates APIからレートを取得
+async function fetchRates() {
     try {
-        // Netlifyリダイレクトルールを使ってAPIにアクセス (USDがデフォルトベース)
+        // Netlifyプロキシを使用
         const response = await fetch('/api/latest.json');
-        console.log('APIレスポンス:', response);
-        const data = await response.json();
-        console.log('取得したデータ:', data);
         
-        if (data.rates) {
-            // USDベースのレートを直接取得
-            const usdToJpy = data.rates.JPY;
-            const usdToEur = data.rates.EUR;
-            const usdToTry = data.rates.TRY;
-            
-            // 各通貨ペアのレートを計算
-            currentRates = {
-                // USD基準のレート
-                USD_JPY: usdToJpy,
-                USD_EUR: usdToEur,
-                USD_TRY: usdToTry,
-                
-                // EUR基準のレート
-                EUR_USD: 1 / usdToEur,
-                EUR_JPY: usdToJpy / usdToEur,
-                EUR_TRY: usdToTry / usdToEur,
-                
-                // JPY基準のレート
-                JPY_USD: 1 / usdToJpy,
-                JPY_EUR: usdToEur / usdToJpy,
-                JPY_TRY: usdToTry / usdToJpy,
-                
-                // TRY基準のレート
-                TRY_USD: 1 / usdToTry,
-                TRY_EUR: usdToEur / usdToTry,
-                TRY_JPY: usdToJpy / usdToTry
-            };
-            
-            // レート表示を更新
-            document.getElementById('usd-jpy').textContent = currentRates.USD_JPY.toFixed(2);
-            document.getElementById('usd-eur').textContent = currentRates.USD_EUR.toFixed(4);
-            document.getElementById('usd-try').textContent = currentRates.USD_TRY.toFixed(2);
-            
-            // 更新時間を表示 (APIからのタイムスタンプを使用)
-            const updateDate = new Date(data.timestamp * 1000);
-            document.getElementById('last-update').textContent = updateDate.toLocaleString();
-        } else {
-            throw new Error('APIからのレスポンスエラー');
+        if (!response.ok) {
+            throw new Error(`APIエラー: ${response.status}`);
         }
+        
+        const data = await response.json();
+        
+        // 取得したレートを保存
+        rates.usd = {
+            jpy: data.rates.JPY,
+            eur: data.rates.EUR,
+            try: data.rates.TRY
+        };
+        
+        // 他の通貨間のレートを計算
+        calculateCrossRates();
+        
+        // 更新時間を記録
+        lastUpdate = new Date(data.timestamp * 1000);
+        
+        return true;
     } catch (error) {
-        console.error('レート取得中にエラーが発生しました:', error);
+        console.error('レート取得エラー:', error);
         throw error;
     }
 }
 
+// クロスレートを計算
+function calculateCrossRates() {
+    // EUR基準のレート
+    rates.eur = {
+        usd: 1 / rates.usd.eur,
+        jpy: rates.usd.jpy / rates.usd.eur,
+        try: rates.usd.try / rates.usd.eur
+    };
+    
+    // JPY基準のレート
+    rates.jpy = {
+        usd: 1 / rates.usd.jpy,
+        eur: 1 / rates.eur.jpy,
+        try: rates.usd.try / rates.usd.jpy
+    };
+    
+    // TRY基準のレート
+    rates.try = {
+        usd: 1 / rates.usd.try,
+        eur: 1 / rates.eur.try,
+        jpy: 1 / rates.jpy.try
+    };
+}
+
+// レート表示を更新
+function updateRateDisplay() {
+    // USD基準のレート表示
+    document.getElementById('usd-jpy').textContent = rates.usd.jpy.toFixed(2);
+    document.getElementById('usd-eur').textContent = rates.usd.eur.toFixed(4);
+    document.getElementById('usd-try').textContent = rates.usd.try.toFixed(2);
+    
+    // EUR基準のレート表示
+    document.getElementById('eur-jpy').textContent = rates.eur.jpy.toFixed(2);
+    document.getElementById('eur-usd').textContent = rates.eur.usd.toFixed(4);
+    document.getElementById('eur-try').textContent = rates.eur.try.toFixed(2);
+    
+    // 更新日時を表示
+    document.getElementById('last-update').textContent = lastUpdate.toLocaleString();
+}
+
 // 通貨換算関数
 function convert(source) {
-    // 入力値を取得
+    // 各入力フィールドを取得
     const jpyInput = document.getElementById('jpy');
-    const eurInput = document.getElementById('eur');
     const usdInput = document.getElementById('usd');
+    const eurInput = document.getElementById('eur');
     const tryInput = document.getElementById('try');
     
-    // 入力元の値を取得
+    // 入力値を取得
     const value = parseFloat(document.getElementById(source).value);
     
+    // 数値でない場合はクリア
     if (isNaN(value)) {
-        // 数値でない場合は他のフィールドをクリア
         if (source !== 'jpy') jpyInput.value = '';
-        if (source !== 'eur') eurInput.value = '';
         if (source !== 'usd') usdInput.value = '';
+        if (source !== 'eur') eurInput.value = '';
         if (source !== 'try') tryInput.value = '';
         return;
     }
     
-    // 入力元に基づいて換算
-    if (source === 'jpy') {
-        eurInput.value = (value * currentRates.JPY_EUR).toFixed(2);
-        usdInput.value = (value * currentRates.JPY_USD).toFixed(2);
-        tryInput.value = (value * currentRates.JPY_TRY).toFixed(2);
-    } else if (source === 'eur') {
-        jpyInput.value = (value * currentRates.EUR_JPY).toFixed(2);
-        usdInput.value = (value * currentRates.EUR_USD).toFixed(2);
-        tryInput.value = (value * currentRates.EUR_TRY).toFixed(2);
-    } else if (source === 'usd') {
-        jpyInput.value = (value * currentRates.USD_JPY).toFixed(2);
-        eurInput.value = (value * currentRates.USD_EUR).toFixed(2);
-        tryInput.value = (value * currentRates.USD_TRY).toFixed(2);
-    } else if (source === 'try') {
-        jpyInput.value = (value * currentRates.TRY_JPY).toFixed(2);
-        eurInput.value = (value * currentRates.TRY_EUR).toFixed(2);
-        usdInput.value = (value * currentRates.TRY_USD).toFixed(2);
+    // 入力元に基づいて他の通貨に換算
+    switch (source) {
+        case 'jpy':
+            usdInput.value = (value * rates.jpy.usd).toFixed(2);
+            eurInput.value = (value * rates.jpy.eur).toFixed(2);
+            tryInput.value = (value * rates.jpy.try).toFixed(2);
+            break;
+            
+        case 'usd':
+            jpyInput.value = (value * rates.usd.jpy).toFixed(2);
+            eurInput.value = (value * rates.usd.eur).toFixed(2);
+            tryInput.value = (value * rates.usd.try).toFixed(2);
+            break;
+            
+        case 'eur':
+            jpyInput.value = (value * rates.eur.jpy).toFixed(2);
+            usdInput.value = (value * rates.eur.usd).toFixed(2);
+            tryInput.value = (value * rates.eur.try).toFixed(2);
+            break;
+            
+        case 'try':
+            jpyInput.value = (value * rates.try.jpy).toFixed(2);
+            usdInput.value = (value * rates.try.usd).toFixed(2);
+            eurInput.value = (value * rates.try.eur).toFixed(2);
+            break;
     }
 }
 
-// デモ用のダミーデータを設定する関数（API接続に失敗した場合）
+// APIが利用できない場合のダミーデータ
 function setDummyData() {
-    currentRates = {
-        // USD基準のダミーレート
-        USD_JPY: 150.25,
-        USD_EUR: 0.93,
-        USD_TRY: 32.15,
-        
-        // その他の通貨ペアを計算
-        EUR_USD: 1 / 0.93,
-        EUR_JPY: 150.25 / 0.93,
-        EUR_TRY: 32.15 / 0.93,
-        
-        JPY_USD: 1 / 150.25,
-        JPY_EUR: 0.93 / 150.25,
-        JPY_TRY: 32.15 / 150.25,
-        
-        TRY_USD: 1 / 32.15,
-        TRY_EUR: 0.93 / 32.15,
-        TRY_JPY: 150.25 / 32.15
+    rates = {
+        usd: {
+            jpy: 149.8,
+            eur: 0.93,
+            try: 32.45
+        }
     };
     
-    // ダミーレートを表示
-    document.getElementById('usd-jpy').textContent = currentRates.USD_JPY.toFixed(2);
-    document.getElementById('usd-eur').textContent = currentRates.USD_EUR.toFixed(4);
-    document.getElementById('usd-try').textContent = currentRates.USD_TRY.toFixed(2);
+    // 他の通貨間のレートを計算
+    calculateCrossRates();
     
-    // ダミーの更新時間を表示
-    document.getElementById('last-update').textContent = '(サンプルデータ)';
+    // 現在時刻を更新時間として設定
+    lastUpdate = new Date();
+    
+    // UIに反映
+    updateRateDisplay();
+    
+    // 警告メッセージを表示
+    document.getElementById('last-update').textContent = lastUpdate.toLocaleString() + ' (サンプルデータ)';
 }
 
-// ページ読み込み時に実行
-window.addEventListener('DOMContentLoaded', () => {
-    initialize();
-});
+// ページ読み込み時に初期化を実行
+window.addEventListener('DOMContentLoaded', initialize);
