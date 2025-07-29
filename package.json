@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "axios": "^1.11.0",
+    "netlify-cli": "^23.0.0"
+  }
+}
