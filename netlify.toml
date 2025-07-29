@@ -1,0 +1,25 @@
+[build]
+  publish = "."
+
+# APIキーをリダイレクトルールに追加（本番環境では環境変数使用を推奨）
+[[redirects]]
+  from = "/api/latest"
+  to = "https://open.er-api.com/v6/latest?apikey=${API_KEY}&:splat"
+  status = 200
+  force = true
+
+# キャッシュヘッダーの設定
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

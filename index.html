@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通貨換算アプリ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>通貨換算アプリ</h1>
+        
+        <div class="converter">
+            <div class="input-group">
+                <label for="jpy">日本円 (JPY)</label>
+                <input type="number" id="jpy" placeholder="0.00" oninput="convert('jpy')">
+            </div>
+            
+            <div class="input-group">
+                <label for="eur">ユーロ (EUR)</label>
+                <input type="number" id="eur" placeholder="0.00" oninput="convert('eur')">
+            </div>
+            
+            <div class="input-group">
+                <label for="try">トルコリラ (TRY)</label>
+                <input type="number" id="try" placeholder="0.00" oninput="convert('try')">
+            </div>
+            <div class="input-group">
+                <label for="try">ドル (USD)</label>
+                <input type="number" id="try" placeholder="0.00" oninput="convert('try')">
+            </div>
+        </div>
+        
+        <div class="rates-info">
+            <h2>現在のレート</h2>
+            <p id="current-rates">1 EUR = <span id="eur-jpy">...</span> JPY = <span id="eur-try">...</span> TRY</p>
+            <p id="update-time">最終更新: <span id="last-update">...</span></p>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
