@@ -4,7 +4,7 @@
 # APIキーをリダイレクトルールに追加（本番環境では環境変数使用を推奨）
 [[redirects]]
   from = "/api/latest.json"
-  to = "https://openexchangerates.org/api/latest.json?app_id=${API_KEY}"
+  to = "https://openexchangerates.org/api/latest.json?app_id=API_KEY"
   status = 200
   force = true
 
