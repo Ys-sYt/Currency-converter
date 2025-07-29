@@ -18,7 +18,9 @@ async function fetchCurrentRates() {
     try {
         // Netlifyリダイレクトルールを使ってAPIにアクセス (USDがデフォルトベース)
         const response = await fetch('/api/latest.json');
+        console.log('APIレスポンス:', response);
         const data = await response.json();
+        console.log('取得したデータ:', data);
         
         if (data.rates) {
             // USDベースのレートを直接取得
