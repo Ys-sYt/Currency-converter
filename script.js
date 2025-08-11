@@ -32,7 +32,8 @@ async function fetchRates() {
         rates.usd = {
             jpy: data.rates.JPY,
             eur: data.rates.EUR,
-            try: data.rates.TRY
+            try: data.rates.TRY,
+            sek: data.rates.SEK
         };
         
         // 他の通貨間のレートを計算
@@ -54,21 +55,32 @@ function calculateCrossRates() {
     rates.eur = {
         usd: 1 / rates.usd.eur,
         jpy: rates.usd.jpy / rates.usd.eur,
-        try: rates.usd.try / rates.usd.eur
+        try: rates.usd.try / rates.usd.eur,
+        sek: rates.usd.sek / rates.usd.eur
     };
     
     // JPY基準のレート
     rates.jpy = {
         usd: 1 / rates.usd.jpy,
         eur: 1 / rates.eur.jpy,
-        try: rates.usd.try / rates.usd.jpy
+        try: rates.usd.try / rates.usd.jpy,
+        sek: rates.usd.sek / rates.usd.jpy
     };
     
     // TRY基準のレート
     rates.try = {
         usd: 1 / rates.usd.try,
         eur: 1 / rates.eur.try,
-        jpy: 1 / rates.jpy.try
+        jpy: 1 / rates.jpy.try,
+        sek: rates.usd.sek / rates.usd.try
+    };
+
+    // SEK基準のレート
+    rates.sek = {
+        usd: 1 / rates.usd.sek,
+        eur: 1 / rates.eur.sek,
+        jpy: 1 / rates.jpy.sek,
+        try: 1 / rates.try.sek,
     };
 }
 
@@ -78,11 +90,12 @@ function updateRateDisplay() {
     document.getElementById('usd-jpy').textContent = rates.usd.jpy.toFixed(2);
     document.getElementById('usd-eur').textContent = rates.usd.eur.toFixed(4);
     document.getElementById('usd-try').textContent = rates.usd.try.toFixed(2);
-    
+    document.getElementById('usd-sek').textContent = rates.usd.sek.toFixed(2);
     // EUR基準のレート表示
     document.getElementById('eur-jpy').textContent = rates.eur.jpy.toFixed(2);
     document.getElementById('eur-usd').textContent = rates.eur.usd.toFixed(4);
     document.getElementById('eur-try').textContent = rates.eur.try.toFixed(2);
+    document.getElementById('eur-sek').textContent = rates.eur.sek.toFixed(2);
     
     // 更新日時を表示
     document.getElementById('last-update').textContent = lastUpdate.toLocaleString();

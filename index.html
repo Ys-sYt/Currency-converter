@@ -24,19 +24,22 @@
             <div class="input-group">
                 <label for="eur">ユーロ (EUR)</label>
                 <input type="number" id="eur" placeholder="0.00" oninput="convert('eur')">
-            </div>
-            
+            </div>            
             <div class="input-group">
                 <label for="try">トルコリラ (TRY)</label>
                 <input type="number" id="try" placeholder="0.00" oninput="convert('try')">
+            </div>
+            <div class="input-group">
+                <label for="sek">スウェーデンクローネ (SEK)</label>
+                <input type="number" id="sek" placeholder="0.00" oninput="convert('sek')">
             </div>
         </div>
         
         <div class="rates-info">
             <h2>現在のレート</h2>
             <div class="rate-display">
-                <p>1 USD = <span id="usd-jpy">...</span> JPY = <span id="usd-eur">...</span> EUR = <span id="usd-try">...</span> TRY</p>
-                <p>1 EUR = <span id="eur-jpy">...</span> JPY = <span id="eur-usd">...</span> USD = <span id="eur-try">...</span> TRY</p>
+                <p>1 USD = <span id="usd-jpy">...</span> JPY = <span id="usd-eur">...</span> EUR = <span id="usd-try">...</span> TRY = <span id="usd-sek">...</span> SEK</p>
+                <p>1 EUR = <span id="eur-jpy">...</span> JPY = <span id="eur-usd">...</span> USD = <span id="eur-try">...</span> TRY = <span id="eur-sek">...</span> SEK</p>
             </div>
             <p id="update-time">最終更新: <span id="last-update">取得中...</span></p>
         </div>
