@@ -108,6 +108,7 @@ function convert(source) {
     const usdInput = document.getElementById('usd');
     const eurInput = document.getElementById('eur');
     const tryInput = document.getElementById('try');
+    const sekInput = document.getElementById('sek');
     
     // 入力値を取得
     const value = parseFloat(document.getElementById(source).value);
@@ -118,6 +119,7 @@ function convert(source) {
         if (source !== 'usd') usdInput.value = '';
         if (source !== 'eur') eurInput.value = '';
         if (source !== 'try') tryInput.value = '';
+        if (source !== 'sek') tryInput.value = '';
         return;
     }
     
@@ -127,24 +129,34 @@ function convert(source) {
             usdInput.value = (value * rates.jpy.usd).toFixed(2);
             eurInput.value = (value * rates.jpy.eur).toFixed(2);
             tryInput.value = (value * rates.jpy.try).toFixed(2);
+            sekInput.value = (value * rates.jpy.sek).toFixed(2);
             break;
             
         case 'usd':
             jpyInput.value = (value * rates.usd.jpy).toFixed(2);
             eurInput.value = (value * rates.usd.eur).toFixed(2);
             tryInput.value = (value * rates.usd.try).toFixed(2);
+            sekInput.value = (value * rates.usd.sek).toFixed(2);
             break;
             
         case 'eur':
             jpyInput.value = (value * rates.eur.jpy).toFixed(2);
             usdInput.value = (value * rates.eur.usd).toFixed(2);
             tryInput.value = (value * rates.eur.try).toFixed(2);
+            sekInput.value = (value * rates.eur.sek).toFixed(2);
             break;
             
         case 'try':
             jpyInput.value = (value * rates.try.jpy).toFixed(2);
             usdInput.value = (value * rates.try.usd).toFixed(2);
             eurInput.value = (value * rates.try.eur).toFixed(2);
+            sekInput.value = (value * rates.try.sek).toFixed(2);
+            break;
+        case 'sek':
+            jpyInput.value = (value * rates.sek.jpy).toFixed(2);
+            usdInput.value = (value * rates.sek.usd).toFixed(2);
+            eurInput.value = (value * rates.sek.eur).toFixed(2);
+            tryInput.value = (value * rates.sek.try).toFixed(2);
             break;
     }
 }
@@ -153,9 +165,10 @@ function convert(source) {
 function setDummyData() {
     rates = {
         usd: {
-            jpy: 149.8,
-            eur: 0.93,
-            try: 32.45
+            jpy: 148.02,
+            eur: 0.86,
+            try: 40.7,
+            sek: 9.64
         }
     };
     
