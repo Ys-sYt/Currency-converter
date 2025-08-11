@@ -119,7 +119,7 @@ function convert(source) {
         if (source !== 'usd') usdInput.value = '';
         if (source !== 'eur') eurInput.value = '';
         if (source !== 'try') tryInput.value = '';
-        if (source !== 'sek') tryInput.value = '';        https://currency-converter-eurjpytur.netlify.app/.netlify/functions/latest
+        if (source !== 'sek') sekInput.value = ''; 
         return;
     }
     
@@ -152,6 +152,7 @@ function convert(source) {
             eurInput.value = (value * rates.try.eur).toFixed(2);
             sekInput.value = (value * rates.try.sek).toFixed(2);
             break;
+
         case 'sek':
             jpyInput.value = (value * rates.sek.jpy).toFixed(2);
             usdInput.value = (value * rates.sek.usd).toFixed(2);
