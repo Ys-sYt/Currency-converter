@@ -20,7 +20,7 @@ async function initialize() {
 async function fetchRates() {
     try {
         // Netlifyプロキシを使用
-        const response = await fetch('/api/latest.json');
+        const response = await fetch('/.netlify/functions/latest');
         
         if (!response.ok) {
             throw new Error(`APIエラー: ${response.status}`);
@@ -119,7 +119,7 @@ function convert(source) {
         if (source !== 'usd') usdInput.value = '';
         if (source !== 'eur') eurInput.value = '';
         if (source !== 'try') tryInput.value = '';
-        if (source !== 'sek') tryInput.value = '';
+        if (source !== 'sek') tryInput.value = '';        https://currency-converter-eurjpytur.netlify.app/.netlify/functions/latest
         return;
     }
     
