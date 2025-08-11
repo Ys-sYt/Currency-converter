@@ -3,45 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>通貨換算アプリ</title>
+    <title>Currency Converter V1</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>通貨換算アプリ</h1>
+        <h1>Currency Converter V1</h1>
         
         <div class="converter">
             <div class="input-group">
-                <label for="jpy">日本円 (JPY)</label>
+                <label for="jpy">JPY</label>
                 <input type="number" id="jpy" placeholder="0.00" oninput="convert('jpy')">
             </div>
             
             <div class="input-group">
-                <label for="usd">米ドル (USD)</label>
+                <label for="usd">USD</label>
                 <input type="number" id="usd" placeholder="0.00" oninput="convert('usd')">
             </div>
             
             <div class="input-group">
-                <label for="eur">ユーロ (EUR)</label>
+                <label for="eur">EUR</label>
                 <input type="number" id="eur" placeholder="0.00" oninput="convert('eur')">
             </div>            
             <div class="input-group">
-                <label for="try">トルコリラ (TRY)</label>
+                <label for="try">TRY</label>
                 <input type="number" id="try" placeholder="0.00" oninput="convert('try')">
             </div>
             <div class="input-group">
-                <label for="sek">スウェーデンクローネ (SEK)</label>
+                <label for="sek">SEK</label>
                 <input type="number" id="sek" placeholder="0.00" oninput="convert('sek')">
             </div>
         </div>
         
         <div class="rates-info">
-            <h2>現在のレート</h2>
+            <h2>Latest rate</h2>
             <div class="rate-display">
                 <p>1 USD = <span id="usd-jpy">...</span> JPY = <span id="usd-eur">...</span> EUR = <span id="usd-try">...</span> TRY = <span id="usd-sek">...</span> SEK</p>
                 <p>1 EUR = <span id="eur-jpy">...</span> JPY = <span id="eur-usd">...</span> USD = <span id="eur-try">...</span> TRY = <span id="eur-sek">...</span> SEK</p>
             </div>
-            <p id="update-time">最終更新: <span id="last-update">取得中...</span></p>
+            <p id="update-time">last updated: <span id="last-update">updating...</span></p>
         </div>
     </div>
     
