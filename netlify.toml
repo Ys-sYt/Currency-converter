@@ -1,9 +1,0 @@
-[build]
-  publish = "."
-
-# プロキシ設定
-[[redirects]]
-  from = "/api/*"
-  to = "https://openexchangerates.org/api/:splat?app_id=${API_KEY}"
-  status = 200
-  force = true
